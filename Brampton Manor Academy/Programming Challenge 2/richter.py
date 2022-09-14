@@ -1,5 +1,5 @@
 richter_values = [1, 5, 9.1, 9.2, 9.5]
-print('Richter      Joules                  TNT')
+print(f'{"Richter"}{"Joules":>15}{"TNT":>35}')
 
 def joules(richter):
     calc1 = (1.5 * float(richter)) + 4.8
@@ -10,7 +10,7 @@ def tnt(joules):
     return joules / (4.184*(10**9))
 
 for values in richter_values:
-    print (f'{values}       {joules(values)}        {tnt(joules(values))}')
+    print (f'{values:>2}{joules(values):>30}{tnt(joules(values)):>30}')
 
 richter_input = float(input('Enter richter value: '))
 
