@@ -9,7 +9,7 @@ two_x = int(input('Enter the x coordinate for the second point: '))
 two_y = int(input('Enter the y coordinate for the second point: '))
 
 turtle.fillcolor('green')
-turtle.title("Fun with Turtle Graphics and Python")
+turtle.title("Turtle Angle Calculator")
 turtle.write('I will calculate the angle between these two lines')
 
 turtle.goto(one_x, one_y)
@@ -27,5 +27,5 @@ def calculate_angle(m2, m1):
 gradient1 = calculate_gradient(starting_x, starting_y, one_x, one_y)
 gradient2 = calculate_gradient(one_x, one_y, two_x, two_y)
 
-turtle.write(f'The angle between the two lines is {calculate_angle(gradient2, gradient1)}')
+turtle.write(f'The angle between the two lines is {abs(calculate_angle(gradient2, gradient1))}')
 turtle.done()
