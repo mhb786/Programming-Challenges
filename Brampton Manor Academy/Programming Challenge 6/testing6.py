@@ -1,17 +1,10 @@
-Python 3.10.6 (tags/v3.10.6:9c7b4bd, Aug  1 2022, 21:53:49) [MSC v.1932 64 bit (AMD64)] on win32
-Type "help", "copyright", "credits" or "license()" for more information.
 import unittest
+import latinsquare
 
-from mycode import *
+class TestLatinSquare(unittest.TestCase):
 
-
-class MyFirstTests(unittest.TestCase):
-
-    def test_hello(self):
-        self.assertEqual(hello_world(), 'hello world')
-
-    def test_custom_num_list(self):
-        self.assertEqual(len(create_list(10)), 10)
+    def test_square(self):
+        self.assertEqual(latinsquare.latinsquare(1, 0, 0), 4)
 
 if __name__ == '__main__':
     unittest.main()
