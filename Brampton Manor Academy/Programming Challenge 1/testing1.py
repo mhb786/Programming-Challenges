@@ -1,12 +1,13 @@
+import unittest
 import rods
 
-class MyFirstTests(rods.TestCase):
 
-    def test_hello(self):
-        self.assertEqual(hello_world(), 'hello world')
+class TestRods(unittest.TestCase):
 
-    def test_custom_num_list(self):
-        self.assertEqual(len(create_list(10)), 10)
+    def test_meters(self):
+        self.assertEqual(rods.meters(10), 50.292)
+        self.assertEqual(rods.feet(50.292), 165.0)
+
 
 if __name__ == '__main__':
-    rods.main()
+    unittest.main()
