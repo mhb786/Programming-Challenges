@@ -1,10 +1,12 @@
-from 99_trick import calculation_result
+import unittest
+import trick99
 
 
-class MyFirstTests(calculation_result.TestCase):
+class Testing99Trick(unittest.TestCase):
 
     def test_calculation(self):
-        self.assertEqual(calculation(answer, factor), 15)
+        self.assertEqual(trick99.calculation_result(72, 84), 15)
+
 
 if __name__ == '__main__':
-    calculation_result.main()
+    unittest.main()
