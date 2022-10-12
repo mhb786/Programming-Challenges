@@ -4,6 +4,7 @@ public class HelloWorld {
         car_loop();
         weekend();
         switch_weekend();
+        catch_error();
     }
 
     public static void for_loop_yes() {
@@ -50,14 +51,14 @@ public class HelloWorld {
         }
     }
 
-    public static void create_ints() {
-        int[] myNumbers = {1, 2, 3};
+    public static void catch_error() {
 
         try {
-            System.out.println(myNumbers[10]);
+            int[] myNumbers = {1, 2, 3};
+            System.out.println(myNumbers[2]);
         }
-        catch () {
-
+        catch (ArrayIndexOutOfBoundsException error) {
+            System.out.println("There is no index of 10");
         }
     }
 
