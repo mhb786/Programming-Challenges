@@ -15,13 +15,21 @@ def operations():
     n = 1
     while n <= inputnum+1:
         while topnum < inputnum+1 and index < inputnum+1:
-            table[n][1][index] = ops[inputop](table[0][1][topnum], table[n][0])
+            try:
+                table[n][1][index] = ops[inputop](table[n][0], table[0][1][topnum])
+            except:
+                table[n][1][index] = '-'
             index+=1
             topnum+=1
         index = 0
         topnum = 0
         n+=1
+    for x in table:
+        x.insert(1, ' | ')
+    table.insert(1, '------------------')
     for row in table:
         print(*row)
+
+
 
 print(operations())
