@@ -17,7 +17,7 @@ def operations():
         while topnum < inputnum+1 and index < inputnum+1:
             try:
                 table[n][1][index] = round(ops[inputop](table[n][0], table[0][1][topnum]), 1)
-            except:
+            except ZeroDivisionError:
                 table[n][1][index] = '-'
             index+=1
             topnum+=1
@@ -26,12 +26,15 @@ def operations():
         n+=1
     for x in table:
         x.insert(1, ' | ')
-    table.insert(1, '-'*inputnum*3)
+    table.insert(1, '-'*inputnum*4)
     for x in table:
-        print(x[0], x[1], *x[-1])
+        if len(x) == 3:
+            print(x[0], x[1], *x[-1])
+        else:
+            print(x)
     print()
 
 
 
-
-print(operations())
+if __name__ == "__main__":
+    operations()
