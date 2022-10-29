@@ -34,19 +34,18 @@ def data_splitter(csv):
             monthly_dictionary[year_month][1] = float(row[6])
             monthly_dictionary[year_month][2] = float(row[5]) * float(row[6])
 
-    return monthly_dictionary
+    sorted_dict = list(sorted(monthly_dictionary.items(), reverse=True, key=lambda x: x[1]))
+    return sorted_dict
 
 
 def output(monthly_dictionary):
-    sorted_dict = list(sorted(monthly_dictionary.items(), key=lambda x: x[1]))
+    print('The best 6 months are:')
+    for count in range(6):
+        print(monthly_dictionary[count][0])
 
-    print('The worst 6 months are:')
-    for x in range(6):
-        print(sorted_dict[x])
-
-    print('\nThe best 6 months are:')
-    for x in range(6):
-        print(sorted_dict[::-1][x])
+    print('\nThe worst 6 months are:')
+    for count in range(6):
+        print(monthly_dictionary[::-1][count][0])
 
 
 if __name__ == '__main__':
