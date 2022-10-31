@@ -1,14 +1,28 @@
 def encrypter(n, word):
     alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     dial = ''
-    count = 26 % n
+    count = n - 1
 
-    while len(alphabet) > n:
-        for x in (alphabet[n-count:]+alphabet[:n-count])[::n]:
+    while len(alphabet) > 0:
+        for x in (alphabet[count:]+alphabet[:count])[::n]:
             dial += x
+            count = alphabet.index(x) - 1
             alphabet = alphabet.replace(x, '')
-        alphabet = alphabet[n-(count+1):]+alphabet[:n-(count+1)]
+        count += n
+    print(dial)
+
+    result = ''
+    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    index = 0
+    for letter in word:
+        count = alphabet.index(letter) + index
+        if count+1 > 26:
+            count -= 26
+        result += dial[count]
+        index += 1
+        
+    return result
 
 
 if __name__ == "__main__":
-    print(encrypter(5, 'ABCD'))
+    print(encrypter(10, 'MZNOYW'))
