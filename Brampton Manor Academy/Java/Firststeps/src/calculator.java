@@ -1,42 +1,50 @@
 import java.util.Scanner;
 
-public class calculator {
-
-//    public static void main(String[] args) {
-//        int num1, num2;
-//        Scanner sc = new Scanner(System.in);
-//
-//        num1 = sc.nextInt();
-//        num2 = sc.nextInt();
-//    }
-
-    private static int addition (int a, int b) {
-        int answer = a + b;
-        return answer;
-    }
-
-    private static int subtraction (int a, int b) {
-        int answer = a - b;
-        return answer;
-    }
-
-    private static int multiply (int a, int b) {
-        int answer = a * b;
-        return answer;
-    }
-
-    private static int division (int a, int b) {
-        int answer = a / b;
-        return answer;
-    }
+public class JavaCalculator {
 
     public static void main(String[] args) {
-        int num1 = Integer.parseInt(args[0]);
-        int num2 = Integer.parseInt(args[1]);
 
-        int answer = multiply(num1, num2);
-        System.out.println(answer);
+        char operator;
+        Double number1, number2, result;
+
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("Choose an operator: +, -, *, or /");
+        operator = input.next().charAt(0);
+
+        System.out.println("Enter first number");
+        number1 = input.nextDouble();
+
+        System.out.println("Enter second number");
+        number2 = input.nextDouble();
+
+        switch (operator) {
+
+            case '+':
+                result = number1 + number2;
+                System.out.println(number1 + " + " + number2 + " = " + result);
+                break;
+
+            case '-':
+                result = number1 - number2;
+                System.out.println(number1 + " - " + number2 + " = " + result);
+                break;
+
+            case '*':
+                result = number1 * number2;
+                System.out.println(number1 + " * " + number2 + " = " + result);
+                break;
+
+            case '/':
+                result = number1 / number2;
+                System.out.println(number1 + " / " + number2 + " = " + result);
+                break;
+
+            default:
+                System.out.println("Invalid operator!");
+                break;
+        }
+
+        input.close();
     }
-
-
 }
