@@ -13,7 +13,7 @@ public class Challenge7 {
             if (num % 2 == 0) {
                 flag = true;
                 break;
-        }
+            }
 
         if (!flag)
             System.out.println(num + " is a prime number");

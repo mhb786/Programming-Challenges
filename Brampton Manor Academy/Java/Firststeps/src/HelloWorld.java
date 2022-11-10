@@ -4,6 +4,7 @@ public class HelloWorld {
         car_loop();
         weekend();
         switch_weekend();
+        catch_error();
     }
 
     public static void for_loop_yes() {
@@ -30,7 +31,7 @@ public class HelloWorld {
             System.out.println("Today is Sunday");
         }
         else {
-            System.out.println("Looking forwars to the weekend");
+            System.out.println("Looking forward to the weekend");
         }
     }
 
@@ -38,15 +39,21 @@ public class HelloWorld {
         int day = 4;
 
         switch (day) {
-            default:
-                System.out.println("Looking forward to the weekend");
-                break;
-            case 6:
-                System.out.println("Today is Saturday");
-                break;
-            case 7:
-                System.out.println("Today is Sunday");
-                break;
+            default -> System.out.println("Looking forward to the weekend");
+            case 6 -> System.out.println("Today is Saturday");
+            case 7 -> System.out.println("Today is Sunday");
         }
     }
+
+    public static void catch_error() {
+
+        try {
+            int[] myNumbers = {1, 2, 3};
+            System.out.println(myNumbers[5]);
+        }
+        catch (ArrayIndexOutOfBoundsException error) {
+            System.out.println("There is no such index");
+        }
+    }
+
 }
