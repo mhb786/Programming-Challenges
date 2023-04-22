@@ -82,9 +82,9 @@ def LoadFile(SourceCode):
         SourceCode[0] = str(LineNumber)
     except:
         if not FileExists:
-            print("Error Code 1: File does not exist")
+            print("Error Code 1")
         else:
-            print("Error Code 2: Loaded file cannot be read correctly")
+            print("Error Code 2")
             SourceCode[0] = str(LineNumber - 1)
     if LineNumber > 0:
         DisplaySourceCode(SourceCode)
@@ -109,7 +109,7 @@ def EditSourceCode(SourceCode):
 
 def UpdateSymbolTable(SymbolTable, ThisLabel, LineNumber):
     if ThisLabel in SymbolTable:
-        print("Error Code 3: Label already in SymbolTable")
+        print("Error Code 3")
     else:
         SymbolTable[ThisLabel] = LineNumber
     return SymbolTable
@@ -121,7 +121,7 @@ def ExtractLabel(Instruction, LineNumber, Memory, SymbolTable):
         ThisLabel = ThisLabel.strip()
         if ThisLabel != EMPTY_STRING:
             if Instruction[5] != ':':
-                print("Error Code 4: a ':' does not follow the opcode")
+                print("Error Code 4")
                 Memory[0].OpCode = "ERR"
             else:
                 SymbolTable = UpdateSymbolTable(SymbolTable, ThisLabel, LineNumber)
@@ -140,7 +140,7 @@ def ExtractOpCode(Instruction, LineNumber, Memory):
             Memory[LineNumber].OpCode = Operation
         else:
             if Operation != EMPTY_STRING:
-                print("Error Code 5: the opcode is not found in the list of OpCodeValues")
+                print("Error Code 5")
                 Memory[0].OpCode = "ERR"
     return Memory
 
@@ -181,7 +181,7 @@ def PassTwo(Memory, SymbolTable, NumberOfLines):
                     OperandValue = int(Operand)
                     Memory[LineNumber].OperandValue = OperandValue
                 except:
-                    print("Error Code 6: operand is not an integer")
+                    print("Error Code 6")
                     Memory[0].OpCode = "ERR"
     return Memory
 
@@ -322,6 +322,89 @@ def ExecuteBEQ(Registers, Address):
     return Registers
 
 
+def ExecuteBNQ(Registers, Address):
+    StatusRegister = ConvertToBinary(Registers[STATUS])
+    FlagZ = StatusRegister[0]
+    if FlagZ == "0":
+        Registers[PC] = Address
+    return Registers
+
+
+def ExecuteBLT(Registers, Address):
+    StatusRegister = ConvertToBinary(Registers[STATUS])
+    FlagN = StatusRegister[0]
+    if FlagN == "1":
+        Registers[PC] = Address
+    return Registers
+
+
+def ExecuteBGT(Registers, Address):
+    StatusRegister = ConvertToBinary(Registers[STATUS])
+    FlagN = StatusRegister[0]
+    if FlagN == "0":
+        Registers[PC] = Address
+    return Registers
+
+
+def ExecuteLSL(Registers, Address):
+    Value = ConvertToBinary(Registers[ACC]) + "0"*Address
+    Registers[ACC] = ConvertToDecimal(Value[Address:])
+    return Registers
+
+
+def ExecuteLSR(Registers, Address):
+    Value = "0"*Address + ConvertToBinary(Registers[ACC])
+    Registers[ACC] = ConvertToDecimal(Value[:Address])
+    return Registers
+
+
+def ExecuteAND(Memory, Registers, Address):
+    Total = 0
+    op1 = ConvertToBinary(Memory[Address].OperandValue)
+    op2 = ConvertToBinary(Registers[ACC])
+    for Bit in range(3):
+        if op1[Bit] == op2[Bit]:
+            Total += 1
+    Registers[ACC] += Total
+    # Total = op1 & op2
+    return Registers
+
+
+def ExecuteORR(Memory, Registers, Address):
+    Total = 0
+    op1 = ConvertToBinary(Memory[Address].OperandValue)
+    op2 = ConvertToBinary(Registers[ACC])
+    for Bit in range(3):
+        if op1[Bit] == op2[Bit] or op1[Bit] == '1' or op2[Bit] == '1':
+            Total += 1
+    Registers[ACC] += Total
+    # Total = op1 | op2
+    return Registers
+
+
+def ExecuteEOR(Memory, Registers, Address):
+    Total = 0
+    op1 = ConvertToBinary(Memory[Address].OperandValue)
+    op2 = ConvertToBinary(Registers[ACC])
+    for Bit in range(3):
+        if op1[Bit] == '1' and op2[Bit] == '0' or op1[Bit] == '0' and op2[Bit] == '1':
+            Total += 1
+    Registers[ACC] += Total
+    # Total = op1 ^ op2
+    return Registers
+
+
+def ExecuteMVN(Memory, Registers, Address):
+    NewValue = ''
+    for Bit in ConvertToBinary(Memory[Address].OperandValue):
+        if Bit == '1':
+            NewValue += '0'
+        else:
+            NewValue += '1'
+    Registers[ACC] += ConvertToDecimal(NewValue)
+    return Registers
+
+
 def ExecuteJMP(Registers, Address):
     Registers[PC] = Address
     return Registers
@@ -387,6 +470,24 @@ def Execute(SourceCode, Memory):
             Registers = ExecuteCMPimm(Registers, Operand)
         elif OpCode == "BEQ":
             Registers = ExecuteBEQ(Registers, Operand)
+        elif OpCode == "BNQ":
+            Registers = ExecuteBNQ(Registers, Operand)
+        elif OpCode == "BLT":
+            Registers = ExecuteBLT(Registers, Operand)
+        elif OpCode == "BGT":
+            Registers = ExecuteBGT(Registers, Operand)
+        elif OpCode == "LSL":
+            Registers = ExecuteLSL(Registers, Operand)
+        elif OpCode == "LSR":
+            Registers = ExecuteLSR(Registers, Operand)
+        elif OpCode == "AND":
+            Registers = ExecuteAND(Registers, Operand)
+        elif OpCode == "ORR":
+            Registers = ExecuteORR(Registers, Operand)
+        elif OpCode == "EOR":
+            Registers = ExecuteEOR(Registers, Operand)
+        elif OpCode == "MVN":
+            Registers = ExecuteMVN(Registers, Operand)
         elif OpCode == "SUB":
             Registers = ExecuteSUB(Memory, Registers, Operand)
         elif OpCode == "SKP":
@@ -415,25 +516,25 @@ def AssemblerSimulator():
             Memory = ResetMemory(Memory)
         elif MenuOption == 'D':
             if SourceCode[0] == EMPTY_STRING:
-                print("Error Code 7: cannot display source code before file is loaded")
+                print("Error Code 7")
             else:
                 DisplaySourceCode(SourceCode)
         elif MenuOption == 'E':
             if SourceCode[0] == EMPTY_STRING:
-                print("Error Code 8: cannot edit source code before file is loaded")
+                print("Error Code 8")
             else:
                 SourceCode = EditSourceCode(SourceCode)
                 Memory = ResetMemory(Memory)
         elif MenuOption == 'A':
             if SourceCode[0] == EMPTY_STRING:
-                print("Error Code 9: cannot assemble source code before file is loaded")
+                print("Error Code 9")
             else:
                 Memory = Assemble(SourceCode, Memory)
         elif MenuOption == 'R':
             if Memory[0].OperandValue == 0:
-                print("Error Code 10: PassOne unsuccessful")
+                print("Error Code 10")
             elif Memory[0].OpCode == "ERR":
-                print("Error Code 11: PassTwo unsuccessful")
+                print("Error Code 11")
             else:
                 Execute(SourceCode, Memory)
         elif MenuOption == 'X':

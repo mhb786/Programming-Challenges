@@ -82,9 +82,9 @@ def LoadFile(SourceCode):
         SourceCode[0] = str(LineNumber)
     except:
         if not FileExists:
-            print("Error Code 1: File does not exist")
+            print("Error Code 1")
         else:
-            print("Error Code 2: Loaded file cannot be read correctly")
+            print("Error Code 2")
             SourceCode[0] = str(LineNumber - 1)
     if LineNumber > 0:
         DisplaySourceCode(SourceCode)
@@ -109,7 +109,7 @@ def EditSourceCode(SourceCode):
 
 def UpdateSymbolTable(SymbolTable, ThisLabel, LineNumber):
     if ThisLabel in SymbolTable:
-        print("Error Code 3: Label already in SymbolTable")
+        print("Error Code 3")
     else:
         SymbolTable[ThisLabel] = LineNumber
     return SymbolTable
@@ -121,7 +121,7 @@ def ExtractLabel(Instruction, LineNumber, Memory, SymbolTable):
         ThisLabel = ThisLabel.strip()
         if ThisLabel != EMPTY_STRING:
             if Instruction[5] != ':':
-                print("Error Code 4: a ':' does not follow the opcode")
+                print("Error Code 4")
                 Memory[0].OpCode = "ERR"
             else:
                 SymbolTable = UpdateSymbolTable(SymbolTable, ThisLabel, LineNumber)
@@ -140,7 +140,7 @@ def ExtractOpCode(Instruction, LineNumber, Memory):
             Memory[LineNumber].OpCode = Operation
         else:
             if Operation != EMPTY_STRING:
-                print("Error Code 5: the opcode is not found in the list of OpCodeValues")
+                print("Error Code 5")
                 Memory[0].OpCode = "ERR"
     return Memory
 
@@ -181,7 +181,7 @@ def PassTwo(Memory, SymbolTable, NumberOfLines):
                     OperandValue = int(Operand)
                     Memory[LineNumber].OperandValue = OperandValue
                 except:
-                    print("Error Code 6: operand is not an integer")
+                    print("Error Code 6")
                     Memory[0].OpCode = "ERR"
     return Memory
 
@@ -252,7 +252,7 @@ def DisplayCurrentState(SourceCode, Memory, Registers):
     DisplayCode(SourceCode, Memory)
     print("*")
     print("*  PC: ", Registers[PC], " ACC: ", Registers[ACC], " TOS: ", Registers[TOS])
-    print("*  Status Register: ZNV")
+    print("*  Status Register: ZNVP")
     print("*                  ", ConvertToBinary(Registers[STATUS]))
     DisplayFrameDelimiter(-1)
 
@@ -266,6 +266,8 @@ def SetFlags(Value, Registers):
         Registers[STATUS] = ConvertToDecimal("001")
     else:
         Registers[STATUS] = ConvertToDecimal("000")
+    if ConvertToBinary(Registers[ACC]).count("1") % 2 == 0:
+        Registers[STATUS] = ConvertToDecimal(ConvertToBinary(Registers[STATUS]) + "1")
     return Registers
 
 
@@ -415,25 +417,25 @@ def AssemblerSimulator():
             Memory = ResetMemory(Memory)
         elif MenuOption == 'D':
             if SourceCode[0] == EMPTY_STRING:
-                print("Error Code 7: cannot display source code before file is loaded")
+                print("Error Code 7")
             else:
                 DisplaySourceCode(SourceCode)
         elif MenuOption == 'E':
             if SourceCode[0] == EMPTY_STRING:
-                print("Error Code 8: cannot edit source code before file is loaded")
+                print("Error Code 8")
             else:
                 SourceCode = EditSourceCode(SourceCode)
                 Memory = ResetMemory(Memory)
         elif MenuOption == 'A':
             if SourceCode[0] == EMPTY_STRING:
-                print("Error Code 9: cannot assemble source code before file is loaded")
+                print("Error Code 9")
             else:
                 Memory = Assemble(SourceCode, Memory)
         elif MenuOption == 'R':
             if Memory[0].OperandValue == 0:
-                print("Error Code 10: PassOne unsuccessful")
+                print("Error Code 10")
             elif Memory[0].OpCode == "ERR":
-                print("Error Code 11: PassTwo unsuccessful")
+                print("Error Code 11")
             else:
                 Execute(SourceCode, Memory)
         elif MenuOption == 'X':

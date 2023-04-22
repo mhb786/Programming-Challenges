@@ -227,7 +227,7 @@ def ConvertToBinary(DecimalNumber):
         Bit = str(Remainder)
         BinaryString = Bit + BinaryString
         DecimalNumber = DecimalNumber // 2
-    while len(BinaryString) < 3:
+    while len(BinaryString) < 4:
         BinaryString = '0' + BinaryString
     return BinaryString
 
@@ -252,20 +252,20 @@ def DisplayCurrentState(SourceCode, Memory, Registers):
     DisplayCode(SourceCode, Memory)
     print("*")
     print("*  PC: ", Registers[PC], " ACC: ", Registers[ACC], " TOS: ", Registers[TOS])
-    print("*  Status Register: ZNV")
+    print("*  Status Register: ZNVC")
     print("*                  ", ConvertToBinary(Registers[STATUS]))
     DisplayFrameDelimiter(-1)
 
 
 def SetFlags(Value, Registers):
     if Value == 0:
-        Registers[STATUS] = ConvertToDecimal("100")
+        Registers[STATUS] = ConvertToDecimal("1000")
     elif Value < 0:
-        Registers[STATUS] = ConvertToDecimal("010")
+        Registers[STATUS] = ConvertToDecimal("0100")
     elif Value > MAX_INT or Value < -(MAX_INT + 1):
-        Registers[STATUS] = ConvertToDecimal("001")
+        Registers[STATUS] = ConvertToDecimal("0011")
     else:
-        Registers[STATUS] = ConvertToDecimal("000")
+        Registers[STATUS] = ConvertToDecimal("0000")
     return Registers
 
 

@@ -365,6 +365,9 @@ def Execute(SourceCode, Memory):
     DisplayCurrentState(SourceCode, Memory, Registers)
     OpCode = Memory[Registers[PC]].OpCode
     while OpCode != "HLT":
+        if int(SourceCode[0]) == Registers[TOS]:
+            print("Stack overflow error")
+            break
         FrameNumber += 1
         print()
         DisplayFrameDelimiter(FrameNumber)
@@ -382,9 +385,6 @@ def Execute(SourceCode, Memory):
         elif OpCode == "JMP":
             Registers = ExecuteJMP(Registers, Operand)
         elif OpCode == "JSR":
-            if Memory[Registers[TOS] - 1].OperandValue != "":
-                print("Stack overflow error")
-                break
             Memory, Registers = ExecuteJSR(Memory, Registers, Operand)
         elif OpCode == "CMP#":
             Registers = ExecuteCMPimm(Registers, Operand)
