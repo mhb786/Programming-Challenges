@@ -386,7 +386,7 @@ def ExecuteAND(Memory, Registers, Address):
     op1 = ConvertToBinary(Memory[Address].OperandValue)
     op2 = ConvertToBinary(Registers[ACC])
     for Bit in range(3):
-        if op1[Bit] == op2[Bit]:
+        if op1[Bit] == 1 and op1[Bit] == op2[Bit]:
             Total += 1
     Registers[ACC] += Total
     # Total = op1 & op2
