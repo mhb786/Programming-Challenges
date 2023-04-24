@@ -1,8 +1,8 @@
        LDA# 3       * test negative
-       SUB  NUM1      
+       SUB  NUM1
        SKP     
        STA  FINAL 
-       HLT 
+       HLT
 
 
 

@@ -130,8 +130,7 @@ def ExtractLabel(Instruction, LineNumber, Memory, SymbolTable):
 
 def ExtractOpCode(Instruction, LineNumber, Memory):
     if len(Instruction) > 9:
-        OpCodeValues = ["LDA", "STA", "LDA#", "HLT", "ADD", "JMP", "SUB", "CMP#", "BEQ", "SKP", "JSR", "RTN", "   ",
-                        "BNE", "BLT", "BGT", "LSL", "LSR", "AND", "ORR", "EOR", "MVN", "ADD#", "SUB#", "CMP"]
+        OpCodeValues = ["LDA", "STA", "LDA#", "HLT", "ADD", "JMP", "SUB", "CMP#", "BEQ", "SKP", "JSR", "RTN", "   "]
         Operation = Instruction[7:10]
         if len(Instruction) > 10:
             AddressMode = Instruction[10:11]
@@ -218,6 +217,12 @@ def Assemble(SourceCode, Memory):
         else:
             Memory[0].OperandValue = 1
         Memory = PassTwo(Memory, SymbolTable, NumberOfLines)
+    HLT_Problem = True
+    for LineNumber in range(1, NumberOfLines+1):
+        if Memory[LineNumber].OpCode == "HLT":
+            HLT_Problem = False
+    if HLT_Problem:
+        print("The program does not have a HLT so will not terminate")
     return Memory
 
 
@@ -301,33 +306,11 @@ def ExecuteADD(Memory, Registers, Address):
     return Registers
 
 
-def ExecuteADDimm(Registers, Operand):
-    Registers[ACC] = Registers[ACC] + Operand
-    Registers = SetFlags(Registers[ACC], Registers)
-    if Registers[STATUS] == ConvertToDecimal("001"):
-        ReportRunTimeError("Overflow", Registers)
-    return Registers
-
-
 def ExecuteSUB(Memory, Registers, Address):
     Registers[ACC] = Registers[ACC] - Memory[Address].OperandValue
     Registers = SetFlags(Registers[ACC], Registers)
     if Registers[STATUS] == ConvertToDecimal("001"):
         ReportRunTimeError("Overflow", Registers)
-    return Registers
-
-
-def ExecuteSUBimm(Registers, Operand):
-    Registers[ACC] = Registers[ACC] - Operand
-    Registers = SetFlags(Registers[ACC], Registers)
-    if Registers[STATUS] == ConvertToDecimal("001"):
-        ReportRunTimeError("Overflow", Registers)
-    return Registers
-
-
-def ExecuteCMP(Memory, Registers, Address):
-    Value = Registers[ACC] - Memory[Address].OperandValue
-    Registers = SetFlags(Value, Registers)
     return Registers
 
 
@@ -342,89 +325,6 @@ def ExecuteBEQ(Registers, Address):
     FlagZ = StatusRegister[0]
     if FlagZ == "1":
         Registers[PC] = Address
-    return Registers
-
-
-def ExecuteBNQ(Registers, Address):
-    StatusRegister = ConvertToBinary(Registers[STATUS])
-    FlagZ = StatusRegister[0]
-    if FlagZ == "0":
-        Registers[PC] = Address
-    return Registers
-
-
-def ExecuteBLT(Registers, Address):
-    StatusRegister = ConvertToBinary(Registers[STATUS])
-    FlagN = StatusRegister[0]
-    if FlagN == "1":
-        Registers[PC] = Address
-    return Registers
-
-
-def ExecuteBGT(Registers, Address):
-    StatusRegister = ConvertToBinary(Registers[STATUS])
-    FlagN = StatusRegister[0]
-    if FlagN == "0":
-        Registers[PC] = Address
-    return Registers
-
-
-def ExecuteLSL(Registers, Address):
-    Value = ConvertToBinary(Registers[ACC]) + "0"*Address
-    Registers[ACC] = ConvertToDecimal(Value[Address:])
-    return Registers
-
-
-def ExecuteLSR(Registers, Address):
-    Value = "0"*Address + ConvertToBinary(Registers[ACC])
-    Registers[ACC] = ConvertToDecimal(Value[:Address])
-    return Registers
-
-
-def ExecuteAND(Memory, Registers, Address):
-    Total = 0
-    op1 = ConvertToBinary(Memory[Address].OperandValue)
-    op2 = ConvertToBinary(Registers[ACC])
-    for Bit in range(3):
-        if op1[Bit] == op2[Bit]:
-            Total += 1
-    Registers[ACC] += Total
-    # Total = op1 & op2
-    return Registers
-
-
-def ExecuteORR(Memory, Registers, Address):
-    Total = 0
-    op1 = ConvertToBinary(Memory[Address].OperandValue)
-    op2 = ConvertToBinary(Registers[ACC])
-    for Bit in range(3):
-        if op1[Bit] == op2[Bit] or op1[Bit] == '1' or op2[Bit] == '1':
-            Total += 1
-    Registers[ACC] += Total
-    # Total = op1 | op2
-    return Registers
-
-
-def ExecuteEOR(Memory, Registers, Address):
-    Total = 0
-    op1 = ConvertToBinary(Memory[Address].OperandValue)
-    op2 = ConvertToBinary(Registers[ACC])
-    for Bit in range(3):
-        if op1[Bit] == '1' and op2[Bit] == '0' or op1[Bit] == '0' and op2[Bit] == '1':
-            Total += 1
-    Registers[ACC] += Total
-    # Total = op1 ^ op2
-    return Registers
-
-
-def ExecuteMVN(Memory, Registers, Address):
-    NewValue = ''
-    for Bit in ConvertToBinary(Memory[Address].OperandValue):
-        if Bit == '1':
-            NewValue += '0'
-        else:
-            NewValue += '1'
-    Registers[ACC] += ConvertToDecimal(NewValue)
     return Registers
 
 
@@ -485,40 +385,16 @@ def Execute(SourceCode, Memory):
             Registers = ExecuteLDAimm(Registers, Operand)
         elif OpCode == "ADD":
             Registers = ExecuteADD(Memory, Registers, Operand)
-        elif OpCode == "ADD#":
-            Registers = ExecuteADDimm(Registers, Operand)
         elif OpCode == "JMP":
             Registers = ExecuteJMP(Registers, Operand)
         elif OpCode == "JSR":
             Memory, Registers = ExecuteJSR(Memory, Registers, Operand)
-        elif OpCode == "CMP":
-            Registers = ExecuteCMP(Memory, Registers, Operand)
         elif OpCode == "CMP#":
             Registers = ExecuteCMPimm(Registers, Operand)
         elif OpCode == "BEQ":
             Registers = ExecuteBEQ(Registers, Operand)
-        elif OpCode == "BNQ":
-            Registers = ExecuteBNQ(Registers, Operand)
-        elif OpCode == "BLT":
-            Registers = ExecuteBLT(Registers, Operand)
-        elif OpCode == "BGT":
-            Registers = ExecuteBGT(Registers, Operand)
-        elif OpCode == "LSL":
-            Registers = ExecuteLSL(Registers, Operand)
-        elif OpCode == "LSR":
-            Registers = ExecuteLSR(Registers, Operand)
-        elif OpCode == "AND":
-            Registers = ExecuteAND(Memory, Registers, Operand)
-        elif OpCode == "ORR":
-            Registers = ExecuteORR(Memory, Registers, Operand)
-        elif OpCode == "EOR":
-            Registers = ExecuteEOR(Memory, Registers, Operand)
-        elif OpCode == "MVN":
-            Registers = ExecuteMVN(Memory, Registers, Operand)
         elif OpCode == "SUB":
             Registers = ExecuteSUB(Memory, Registers, Operand)
-        elif OpCode == "SUB#":
-            Registers = ExecuteSUBimm(Registers, Operand)
         elif OpCode == "SKP":
             ExecuteSKP()
         elif OpCode == "RTN":
