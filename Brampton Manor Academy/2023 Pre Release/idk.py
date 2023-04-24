@@ -17,5 +17,8 @@ def ConvertToBinary(DecimalNumber):
         BinaryString = '0' + BinaryString
     return BinaryString
 
+a = 39
+b = ~a
 
-print(ConvertToDecimal('001'))
+print(a, ConvertToBinary(a))
+print(b, ConvertToBinary(b))

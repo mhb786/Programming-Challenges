@@ -1,7 +1,7 @@
  NUM1:      2
  NUM2:      5
  NUM3:      -1
- NUM4:      125
+ NUM4:      4
 START: LDA  NUM1    * test while loop
 WHILE: CMP# 2
        BEQ  WEND

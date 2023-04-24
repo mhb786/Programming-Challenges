@@ -369,62 +369,33 @@ def ExecuteBGT(Registers, Address):
     return Registers
 
 
-def ExecuteLSL(Registers, Address):
-    Value = ConvertToBinary(Registers[ACC]) + "0"*Address
-    Registers[ACC] = ConvertToDecimal(Value[Address:])
+def ExecuteLSL(Registers, OpCode):
+    Registers[ACC] = Registers >> OpCode
     return Registers
 
 
-def ExecuteLSR(Registers, Address):
-    Value = "0"*Address + ConvertToBinary(Registers[ACC])
-    Registers[ACC] = ConvertToDecimal(Value[:Address])
+def ExecuteLSR(Registers, OpCode):
+    Registers[ACC] = Registers << OpCode
     return Registers
 
 
 def ExecuteAND(Memory, Registers, Address):
-    Total = 0
-    op1 = ConvertToBinary(Memory[Address].OperandValue)
-    op2 = ConvertToBinary(Registers[ACC])
-    for Bit in range(3):
-        if op1[Bit] == op2[Bit]:
-            Total += 1
-    Registers[ACC] = Total
-    # Total = op1 & op2
+    Registers[ACC] = Memory[Address].OperandValue & Registers[ACC]
     return Registers
 
 
 def ExecuteORR(Memory, Registers, Address):
-    Total = 0
-    op1 = ConvertToBinary(Memory[Address].OperandValue)
-    op2 = ConvertToBinary(Registers[ACC])
-    for Bit in range(3):
-        if op1[Bit] == op2[Bit] or op1[Bit] == '1' or op2[Bit] == '1':
-            Total += 1
-    Registers[ACC] = Total
-    # Total = op1 | op2
+    Registers[ACC] = Memory[Address].OperandValue | Registers[ACC]
     return Registers
 
 
 def ExecuteEOR(Memory, Registers, Address):
-    Total = 0
-    op1 = ConvertToBinary(Memory[Address].OperandValue)
-    op2 = ConvertToBinary(Registers[ACC])
-    for Bit in range(3):
-        if op1[Bit] == '1' and op2[Bit] == '0' or op1[Bit] == '0' and op2[Bit] == '1':
-            Total += 1
-    Registers[ACC] = Total
-    # Total = op1 ^ op2
+    Registers[ACC] = Memory[Address].OperandValue ^ Registers[ACC]
     return Registers
 
 
 def ExecuteMVN(Memory, Registers, Address):
-    NewValue = ''
-    for Bit in ConvertToBinary(Memory[Address].OperandValue):
-        if Bit == '1':
-            NewValue += '0'
-        else:
-            NewValue += '1'
-    Registers[ACC] = ConvertToDecimal(NewValue)
+    Registers[ACC] = ~Memory[Address].OperandValue
     return Registers
 
 
