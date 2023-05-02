@@ -218,6 +218,8 @@ def Assemble(SourceCode, Memory):
         else:
             Memory[0].OperandValue = 1
         Memory = PassTwo(Memory, SymbolTable, NumberOfLines)
+    for Line in range(HI_MEM):
+        print(Memory[Line].__dict__)
     return Memory
 
 
@@ -370,32 +372,38 @@ def ExecuteBGT(Registers, Address):
 
 
 def ExecuteLSL(Registers, OpCode):
-    Registers[ACC] = Registers >> OpCode
+    Registers[ACC] = Registers << OpCode
+    Registers = SetFlags(Registers[ACC], Registers)
     return Registers
 
 
 def ExecuteLSR(Registers, OpCode):
-    Registers[ACC] = Registers << OpCode
+    Registers[ACC] = Registers >> OpCode
+    Registers = SetFlags(Registers[ACC], Registers)
     return Registers
 
 
 def ExecuteAND(Memory, Registers, Address):
     Registers[ACC] = Memory[Address].OperandValue & Registers[ACC]
+    Registers = SetFlags(Registers[ACC], Registers)
     return Registers
 
 
 def ExecuteORR(Memory, Registers, Address):
     Registers[ACC] = Memory[Address].OperandValue | Registers[ACC]
+    Registers = SetFlags(Registers[ACC], Registers)
     return Registers
 
 
 def ExecuteEOR(Memory, Registers, Address):
     Registers[ACC] = Memory[Address].OperandValue ^ Registers[ACC]
+    Registers = SetFlags(Registers[ACC], Registers)
     return Registers
 
 
 def ExecuteMVN(Memory, Registers, Address):
     Registers[ACC] = ~Memory[Address].OperandValue
+    Registers = SetFlags(Registers[ACC], Registers)
     return Registers
 
 
