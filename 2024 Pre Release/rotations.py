@@ -114,7 +114,6 @@ class Puzzle():
         print()
         self.DisplayPuzzle()
         print()
-        self.__Score += self.OverlapPoints()/2
         return self.__Score
 
     def __GetCell(self, Row, Column):
@@ -139,6 +138,7 @@ class Puzzle():
                     PatternString += self.__GetCell(StartRow - 1, StartColumn).GetSymbol()
                     PatternString += self.__GetCell(StartRow - 1, StartColumn + 1).GetSymbol()
                     for P in self.__AllowedPatterns:
+                        print(P.RotatedPatterns())
                         CurrentSymbol = self.__GetCell(Row, Column).GetSymbol()
                         if P.MatchesPattern(PatternString, CurrentSymbol):
                             self.__GetCell(StartRow, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
@@ -154,39 +154,6 @@ class Puzzle():
                 except:
                     pass
         return 0
-    
-    def FindPatterns(self):
-        Patterns = []
-        for StartRow in range(5, 2, -1):
-            for StartColumn in range(1, 4):
-                PatternString = ""
-                CurrentSymbol = self.__GetCell(StartRow, StartColumn).GetSymbol()
-                PatternString += self.__GetCell(StartRow, StartColumn).GetSymbol()
-                PatternString += self.__GetCell(StartRow, StartColumn + 1).GetSymbol()
-                PatternString += self.__GetCell(StartRow, StartColumn + 2).GetSymbol()
-                PatternString += self.__GetCell(StartRow - 1, StartColumn + 2).GetSymbol()
-                PatternString += self.__GetCell(StartRow - 2, StartColumn + 2).GetSymbol()
-                PatternString += self.__GetCell(StartRow - 2, StartColumn + 1).GetSymbol()
-                PatternString += self.__GetCell(StartRow - 2, StartColumn).GetSymbol()
-                PatternString += self.__GetCell(StartRow - 1, StartColumn).GetSymbol()
-                PatternString += self.__GetCell(StartRow - 1, StartColumn + 1).GetSymbol()
-                for P in self.__AllowedPatterns:
-                    if P.MatchesPattern(PatternString, CurrentSymbol):
-                        Patterns.append([CurrentSymbol, StartRow, StartColumn])
-        return arr
-
-    def OverlapPoints(self):
-        Patterns = self.FindPatterns()
-        Overlapped = 0
-        for count, Pattern in enumerate(Patterns):
-            for OtherPattern in Patterns[:count]+Patterns[count+1:]:
-                for R in range(OtherPattern[1], OtherPattern[1]-3, -1):
-                    for C in range(OtherPattern[2], OtherPattern[2]+3):
-                        if R in range(Pattern[1], Pattern[1]-3, -1) and C in range(Pattern[2], Pattern[2]+3):
-                            Overlapped += 1
-
-        return (Overlapped/2)*10 
-
 
     def __GetSymbolFromUser(self):
         Symbol = ""
@@ -234,6 +201,13 @@ class Pattern():
 
     def GetPatternSequence(self):
       return self.__PatternSequence
+
+    def RotatedPatterns(self):
+        Rotations = [self.__PatternSequence]
+        for x in range(3):
+            New = self.__PatternSequence[6:8]+self.__PatternSequence[:6]+self.__PatternSequence[8:]
+            Rotations.append(New)
+        return Rotations
 
 class Cell():
     def __init__(self):
